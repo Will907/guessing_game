@@ -16,6 +16,7 @@ fn main() {
 fn game() -> bool {
     let secret = rand::thread_rng().gen_range(1..=100);
     let mut again = String::new();
+    let mut score = 0;
 
     loop {
         let mut guess = String::new();
@@ -24,7 +25,10 @@ fn game() -> bool {
             .read_line(&mut guess)
             .expect("Failed to read line");
         let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
+            Ok(num) => {
+                score += 1;
+                num
+            },
             Err(_) => continue,
         };
         println!("You guessed: {guess}");
@@ -32,7 +36,10 @@ fn game() -> bool {
         match guess.cmp(&secret) {
             Ordering::Less => println!("Too small"),
             Ordering::Equal => {
-                println!("You guessed it!");
+                match score {
+                    1 => println!("You guessed it in {score} guess!"),
+                    _ => println!("You guessed it in {score} guesses!"),
+                };
                 break;
             },
             Ordering::Greater => println!("Too big"),
